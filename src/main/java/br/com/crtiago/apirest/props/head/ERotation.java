@@ -13,26 +13,12 @@ public enum ERotation {
 	public int id;
 	public String state;
 
-	public static int getEnum(int aId) {
-		for (ERotation lRotation : ERotation.values()) {
-			if (lRotation.id == aId) {
-				return lRotation.id;
-			}
-		}
-		return EM_REPOUSO.id;
+	public static int getMaxId() {
+		return ROTACAO_90.getId();
 	}
 
-	public static int getEnum(String aState) {
-		for (ERotation lRotation : ERotation.values()) {
-			if (lRotation.state.equalsIgnoreCase(aState)) {
-				return lRotation.id;
-			}
-		}
-		return EM_REPOUSO.id;
-	}
-	
-	public static int getMaxId() {
-		return ROTACAO_90.id;
+	public int getId() {
+		return id;
 	}
 
 }

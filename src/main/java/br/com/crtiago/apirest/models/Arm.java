@@ -5,8 +5,8 @@ import br.com.crtiago.apirest.props.arm.EPulse;
 
 public class Arm {
 
-	private int idElbow = EElbow.EM_REPOUSO.id;
-	private int idPulse = EPulse.EM_REPOUSO.id;
+	private int idElbow = EElbow.EM_REPOUSO.getId();
+	private int idPulse = EPulse.EM_REPOUSO.getId();
 
 	public Arm() {
 		super();

@@ -13,26 +13,13 @@ public enum EElbow {
 	public int id;
 	public String state;
 
-	public static int getEnum(int aId) {
-		for (EElbow lElbow : EElbow.values()) {
-			if (lElbow.id == aId) {
-				return lElbow.id;
-			}
-		}
-		return EM_REPOUSO.id;
-	}
-
-	public static int getEnum(String aState) {
-		for (EElbow lElbow : EElbow.values()) {
-			if (lElbow.state.equalsIgnoreCase(aState)) {
-				return lElbow.id;
-			}
-		}
-		return EM_REPOUSO.id;
-	}
 	
 	public static int getMaxId() {
-		return FORTEMENTE_CONTRAIDO.id;
+		return FORTEMENTE_CONTRAIDO.getId();
+	}
+
+	public int getId() {
+		return id;
 	}
 
 }

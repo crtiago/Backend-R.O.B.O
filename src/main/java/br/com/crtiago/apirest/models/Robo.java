@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Robo {
 
-	@JsonProperty(value="Head")
+	@JsonProperty(value = "Head")
 	private Head head;
-	@JsonProperty(value="LeftArm")
+	@JsonProperty(value = "LeftArm")
 	private Arm leftArm;
-	@JsonProperty(value="RightArm")
+	@JsonProperty(value = "RightArm")
 	private Arm rightArm;
 
 	public Robo() {

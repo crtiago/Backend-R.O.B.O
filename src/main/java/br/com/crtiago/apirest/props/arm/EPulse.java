@@ -14,26 +14,12 @@ public enum EPulse {
 	public int id;
 	public String state;
 
-	public static int getEnum(int aId) {
-		for (EPulse lPulse : EPulse.values()) {
-			if (lPulse.id == aId) {
-				return lPulse.id;
-			}
-		}
-		return EM_REPOUSO.id;
+	public static int getMaxId() {
+		return ROTACAO_PARA_180.getId();
 	}
 
-	public static int getEnum(String aState) {
-		for (EPulse lPulse : EPulse.values()) {
-			if (lPulse.state.equalsIgnoreCase(aState)) {
-				return lPulse.id;
-			}
-		}
-		return EM_REPOUSO.id;
-	}
-	
-	public static int getMaxId() {
-		return ROTACAO_PARA_180.id;
+	public int getId() {
+		return id;
 	}
 
 }

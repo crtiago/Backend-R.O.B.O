@@ -5,8 +5,8 @@ import br.com.crtiago.apirest.props.head.ERotation;
 
 public class Head {
 
-	private int idRotation = ERotation.EM_REPOUSO.id;
-	private int idInclination = EInclination.EM_REPOUSO.id;
+	private int idRotation = ERotation.EM_REPOUSO.getId();
+	private int idInclination = EInclination.EM_REPOUSO.getId();
 
 	public Head() {
 		super();

@@ -12,25 +12,12 @@ public enum EInclination {
 	public int id;
 	public String state;
 
-	public static int getEnum(int aId) {
-		for (EInclination lInclination : EInclination.values()) {
-			if (lInclination.id == aId) {
-				return lInclination.id;
-			}
-		}
-		return EM_REPOUSO.id;
-	}
-
-	public static int getEnum(String aState) {
-		for (EInclination lInclination : EInclination.values()) {
-			if (lInclination.state.equalsIgnoreCase(aState)) {
-				return lInclination.id;
-			}
-		}
-		return EM_REPOUSO.id;
-	}
-
 	public static int getMaxId() {
-		return PARA_BAIXO.id;
+		return PARA_BAIXO.getId();
 	}
+
+	public int getId() {
+		return id;
+	}
+
 }
