@@ -118,16 +118,22 @@ public class RoboApi {
 
 		if (checkLimit(EPulse.getMaxId(), idFront)) {
 			baseResponse = new ResponseBase<>(false, EMessages.ERROR.getMessage(), null);
-		} else if (side.toLowerCase().equals("esquerdo") && leftArm.getIdElbow() == EElbow.FORTEMENTE_CONTRAIDO.id) {
-			if (checkObject(idFront, "leftarm", 1)) {
+		} else if (side.toLowerCase().equals("esquerdo")) {
+			if (leftArm.getIdElbow() != EElbow.FORTEMENTE_CONTRAIDO.id) {
+				baseResponse = new ResponseBase<>(false,
+						"Só pode movimentar o Pulso caso o Cotovelo esteja Fortemente Contraído", null);
+			} else if (checkObject(idFront, "leftarm", 1)) {
 				leftArm.setIdPulse(EPulse.getEnum(idFront));
-				baseResponse = new ResponseBase<>(true, EMessages.SUCCESS.getMessage(),leftArm);
+				baseResponse = new ResponseBase<>(true, EMessages.SUCCESS.getMessage(), leftArm);
 			} else {
 				baseResponse = new ResponseBase<>(false, EMessages.PERMISSION.getMessage(), null);
 			}
 
-		} else if (side.toLowerCase().equals("direito") && rightArm.getIdElbow() == EElbow.FORTEMENTE_CONTRAIDO.id) {
-			if (checkObject(idFront, "rightarm", 1)) {
+		} else if (side.toLowerCase().equals("direito")) {
+			if (rightArm.getIdElbow() != EElbow.FORTEMENTE_CONTRAIDO.id) {
+				baseResponse = new ResponseBase<>(false,
+						"Só pode movimentar o Pulso caso o Cotovelo esteja Fortemente Contraído", null);
+			}else if (checkObject(idFront, "rightarm", 1)) {
 				rightArm.setIdPulse(EPulse.getEnum(idFront));
 				baseResponse = new ResponseBase<>(true, EMessages.SUCCESS.getMessage(), rightArm);
 			} else {
