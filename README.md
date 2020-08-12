@@ -14,6 +14,9 @@ os estados 3 ou 5, nunca pulando um estado.
 - Atenção aos limites! Se tentar enviar um estado inválido você irá corromper o
 sistema do R.O.B.O.
 
+# Versão
+- Java: 8
+
 # Passos para executar o Frontend:
 - Passo 1: realizar o download do Backend.
 - Passo 2: abrir o projeto em uma IDE compatível com Java, preferencialmente na IDE [Spring Tool Suite](https://spring.io/tools).
