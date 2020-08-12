@@ -1,4 +1,4 @@
-package br.com.crtiago.apirest.config;
+package br.com.crtiago.apirest.settings;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

@@ -13,7 +13,6 @@ public enum EElbow {
 	public int id;
 	public String state;
 
-	
 	public static int getMaxId() {
 		return FORTEMENTE_CONTRAIDO.getId();
 	}

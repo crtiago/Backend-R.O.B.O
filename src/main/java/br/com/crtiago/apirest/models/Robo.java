@@ -45,5 +45,4 @@ public class Robo {
 	public void setRightArm(Arm rightArm) {
 		this.rightArm = rightArm;
 	}
-
 }

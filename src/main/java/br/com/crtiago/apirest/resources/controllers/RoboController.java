@@ -1,4 +1,4 @@
-package br.com.crtiago.apirest.resources;
+package br.com.crtiago.apirest.resources.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,13 +18,13 @@ import br.com.crtiago.apirest.props.arm.EPulse;
 import br.com.crtiago.apirest.props.head.EInclination;
 import br.com.crtiago.apirest.props.head.ERotation;
 import br.com.crtiago.apirest.props.utils.EMessages;
-import br.com.crtiago.apirest.resources.rest.ResponseBase;
+import br.com.crtiago.apirest.resources.rests.ResponseBase;
 import br.com.crtiago.apirest.services.RoboService;
 
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/api")
-public class RoboApi {
+public class RoboController {
 
 	@Autowired(required = true)
 	private RoboService roboService;
@@ -41,7 +41,7 @@ public class RoboApi {
 		try {
 			baseResponse = new ResponseBase<>(true, "Informações carregadas com sucesso", robo);
 		} catch (Exception e) {
-			baseResponse = new ResponseBase<>(false, "Informações não carregadas", robo);
+			baseResponse = new ResponseBase<>(false, "Informações não carregadas", null);
 		}
 		return new ResponseEntity<ResponseBase<Robo>>(baseResponse, HttpStatus.OK);
 	}
@@ -67,8 +67,8 @@ public class RoboApi {
 
 		if (roboService.checkLimit(ERotation.getMaxId(), idRotation)) {
 			baseResponse = new ResponseBase<>(false, EMessages.ERROR.getMessage(), null);
-		} else if (head.getIdInclination() == EInclination.PARA_BAIXO.getId()) {
-			baseResponse = new ResponseBase<>(false, EMessages.PERMISSION_HEAD.getMessage(), head);
+		} else if (roboService.checkPermissionRotation(head.getIdInclination(), EInclination.PARA_BAIXO.getId())) {
+			baseResponse = new ResponseBase<>(false, EMessages.PERMISSION_HEAD.getMessage(), null);
 		} else {
 			if (roboService.checkPermission(head.getIdRotation(), idRotation)) {
 				head.setIdRotation(idRotation);
@@ -103,7 +103,7 @@ public class RoboApi {
 				baseResponse = new ResponseBase<>(false, EMessages.PERMISSION.getMessage(), null);
 			}
 		} else {
-			baseResponse = new ResponseBase<>(false, "Opção inválida", null);
+			baseResponse = new ResponseBase<>(false, EMessages.INVALID_OPTION.getMessage(), null);
 		}
 		return new ResponseEntity<ResponseBase<Arm>>(baseResponse, HttpStatus.OK);
 	}
@@ -117,7 +117,7 @@ public class RoboApi {
 		if (roboService.checkLimit(EPulse.getMaxId(), idFront)) {
 			baseResponse = new ResponseBase<>(false, EMessages.ERROR.getMessage(), null);
 		} else if (side.toLowerCase().equals("esquerdo")) {
-			if (roboService.getPermissionPulse(leftArm.getIdElbow(), EElbow.FORTEMENTE_CONTRAIDO.getId())) {
+			if (roboService.checkPermissionPulse(leftArm.getIdElbow(), EElbow.FORTEMENTE_CONTRAIDO.getId())) {
 				baseResponse = new ResponseBase<>(false, EMessages.PERMISSION_PULSE.getMessage(), null);
 			} else if (roboService.checkPermission(leftArm.getIdPulse(), idFront)) {
 				leftArm.setIdPulse(idFront);
@@ -127,7 +127,7 @@ public class RoboApi {
 			}
 
 		} else if (side.toLowerCase().equals("direito")) {
-			if (roboService.getPermissionPulse(rightArm.getIdElbow(), EElbow.FORTEMENTE_CONTRAIDO.getId())) {
+			if (roboService.checkPermissionPulse(rightArm.getIdElbow(), EElbow.FORTEMENTE_CONTRAIDO.getId())) {
 				baseResponse = new ResponseBase<>(false, EMessages.PERMISSION_PULSE.getMessage(), null);
 			} else if (roboService.checkPermission(rightArm.getIdPulse(), idFront)) {
 				rightArm.setIdPulse(idFront);

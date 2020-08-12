@@ -1,4 +1,4 @@
-package br.com.crtiago.apirest.resources.rest;
+package br.com.crtiago.apirest.resources.rests;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
