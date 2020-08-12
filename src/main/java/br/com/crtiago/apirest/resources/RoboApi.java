@@ -1,5 +1,6 @@
 package br.com.crtiago.apirest.resources;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,11 +19,15 @@ import br.com.crtiago.apirest.props.head.EInclination;
 import br.com.crtiago.apirest.props.head.ERotation;
 import br.com.crtiago.apirest.props.utils.EMessages;
 import br.com.crtiago.apirest.resources.rest.ResponseBase;
+import br.com.crtiago.apirest.services.RoboService;
 
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/api")
 public class RoboApi {
+
+	@Autowired(required = true)
+	private RoboService roboService;
 
 	private Head head = new Head();
 	private Arm leftArm = new Arm();
@@ -45,9 +50,9 @@ public class RoboApi {
 	public ResponseEntity<ResponseBase<Head>> changeInclinationHead(@PathVariable Integer idInclination) {
 		ResponseBase<Head> baseResponse = new ResponseBase<>();
 
-		if (checkLimit(EInclination.getMaxId(), idInclination)) {
+		if (roboService.checkLimit(EInclination.getMaxId(), idInclination)) {
 			baseResponse = new ResponseBase<>(false, EMessages.ERROR.getMessage(), null);
-		} else if (checkProgression(idInclination, "head", 0)) {
+		} else if (roboService.checkPermission(head.getIdInclination(), idInclination)) {
 			head.setIdInclination(idInclination);
 			baseResponse = new ResponseBase<>(true, EMessages.SUCCESS.getMessage(), head);
 		} else {
@@ -60,13 +65,12 @@ public class RoboApi {
 	public ResponseEntity<ResponseBase<Head>> changeRotationHead(@PathVariable Integer idRotation) {
 		ResponseBase<Head> baseResponse = new ResponseBase<>();
 
-		if (checkLimit(ERotation.getMaxId(), idRotation)) {
+		if (roboService.checkLimit(ERotation.getMaxId(), idRotation)) {
 			baseResponse = new ResponseBase<>(false, EMessages.ERROR.getMessage(), null);
 		} else if (head.getIdInclination() == EInclination.PARA_BAIXO.getId()) {
-			baseResponse = new ResponseBase<>(false, "Não é permitido rotacionar a cabeça com a inclinação para baixo",
-					head);
+			baseResponse = new ResponseBase<>(false, EMessages.PERMISSION_HEAD.getMessage(), head);
 		} else {
-			if (checkProgression(idRotation, "head", 1)) {
+			if (roboService.checkPermission(head.getIdRotation(), idRotation)) {
 				head.setIdRotation(idRotation);
 				baseResponse = new ResponseBase<>(true, EMessages.SUCCESS.getMessage(), head);
 			} else {
@@ -82,17 +86,17 @@ public class RoboApi {
 
 		ResponseBase<Arm> baseResponse = new ResponseBase<>();
 
-		if (checkLimit(EElbow.getMaxId(), idFront)) {
+		if (roboService.checkLimit(EElbow.getMaxId(), idFront)) {
 			baseResponse = new ResponseBase<>(false, EMessages.ERROR.getMessage(), null);
 		} else if (side.toLowerCase().equals("esquerdo")) {
-			if (checkProgression(idFront, "leftarm", 0)) {
+			if (roboService.checkPermission(leftArm.getIdElbow(), idFront)) {
 				leftArm.setIdElbow(idFront);
 				baseResponse = new ResponseBase<>(true, EMessages.SUCCESS.getMessage(), leftArm);
 			} else {
 				baseResponse = new ResponseBase<>(false, EMessages.PERMISSION.getMessage(), null);
 			}
 		} else if (side.toLowerCase().equals("direito")) {
-			if (checkProgression(idFront, "rightarm", 0)) {
+			if (roboService.checkPermission(rightArm.getIdElbow(), idFront)) {
 				rightArm.setIdElbow(idFront);
 				baseResponse = new ResponseBase<>(true, EMessages.SUCCESS.getMessage(), rightArm);
 			} else {
@@ -110,13 +114,12 @@ public class RoboApi {
 
 		ResponseBase<Arm> baseResponse = new ResponseBase<>();
 
-		if (checkLimit(EPulse.getMaxId(), idFront)) {
+		if (roboService.checkLimit(EPulse.getMaxId(), idFront)) {
 			baseResponse = new ResponseBase<>(false, EMessages.ERROR.getMessage(), null);
 		} else if (side.toLowerCase().equals("esquerdo")) {
-			if (leftArm.getIdElbow() != EElbow.FORTEMENTE_CONTRAIDO.getId()) {
-				baseResponse = new ResponseBase<>(false,
-						"Só pode movimentar o Pulso caso o Cotovelo esteja Fortemente Contraído", null);
-			} else if (checkProgression(idFront, "leftarm", 1)) {
+			if (roboService.getPermissionPulse(leftArm.getIdElbow(), EElbow.FORTEMENTE_CONTRAIDO.getId())) {
+				baseResponse = new ResponseBase<>(false, EMessages.PERMISSION_PULSE.getMessage(), null);
+			} else if (roboService.checkPermission(leftArm.getIdPulse(), idFront)) {
 				leftArm.setIdPulse(idFront);
 				baseResponse = new ResponseBase<>(true, EMessages.SUCCESS.getMessage(), leftArm);
 			} else {
@@ -124,10 +127,9 @@ public class RoboApi {
 			}
 
 		} else if (side.toLowerCase().equals("direito")) {
-			if (rightArm.getIdElbow() != EElbow.FORTEMENTE_CONTRAIDO.getId()) {
-				baseResponse = new ResponseBase<>(false,
-						"Só pode movimentar o Pulso caso o Cotovelo esteja Fortemente Contraído", null);
-			} else if (checkProgression(idFront, "rightarm", 1)) {
+			if (roboService.getPermissionPulse(rightArm.getIdElbow(), EElbow.FORTEMENTE_CONTRAIDO.getId())) {
+				baseResponse = new ResponseBase<>(false, EMessages.PERMISSION_PULSE.getMessage(), null);
+			} else if (roboService.checkPermission(rightArm.getIdPulse(), idFront)) {
 				rightArm.setIdPulse(idFront);
 				baseResponse = new ResponseBase<>(true, EMessages.SUCCESS.getMessage(), rightArm);
 			} else {
@@ -139,52 +141,5 @@ public class RoboApi {
 
 		return new ResponseEntity<ResponseBase<Arm>>(baseResponse, HttpStatus.OK);
 
-	}
-
-	private boolean checkProgression(int idFront, String partRobot, int controlPart) {
-
-		switch (partRobot.toLowerCase()) {
-		case "head":
-			if (controlPart == 0) {
-				return checkPermission(head.getIdInclination(), idFront);
-			} else if (controlPart == 1) {
-				return checkPermission(head.getIdRotation(), idFront);
-			}
-		case "leftarm":
-			if (controlPart == 0) {
-				return checkPermission(leftArm.getIdElbow(), idFront);
-			} else if (controlPart == 1) {
-				return checkPermission(leftArm.getIdPulse(), idFront);
-			}
-		case "rightarm":
-			if (controlPart == 0) {
-				return checkPermission(rightArm.getIdElbow(), idFront);
-			} else if (controlPart == 1) {
-				return checkPermission(rightArm.getIdPulse(), idFront);
-			}
-		default:
-			return false;
-		}
-
-	}
-
-	private boolean checkPermission(int idObject, int idFront) {
-		if (idObject == idFront) {
-			return false;
-		} else if (idObject == idFront + 1) {
-			return true;
-		} else if (idObject == idFront - 1) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	private boolean checkLimit(int max, int idFront) {
-		if (idFront > max || idFront < 0) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 }
